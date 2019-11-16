@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace NetCoreEmpty
 {
@@ -17,13 +18,20 @@ namespace NetCoreEmpty
 
         public IConfiguration _config { get; set; }
 
-        public Startup()
+        public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json");
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
             _config = builder.Build();
+
+            if (env.IsDevelopment())
+            {
+                //builder.AddApplicationInsightsSettings();
+            }
+
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
