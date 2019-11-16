@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NetCoreEmpty.Sevices;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace NetCoreEmpty
@@ -38,10 +39,13 @@ namespace NetCoreEmpty
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddSingleton<IMensagemService, TextoMensagemService>();
+            services.AddSingleton(provider => _config);
+            services.AddSingleton<IMensagemService, ConfigurationMensagemService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IMensagemService msg)
         {
             if (env.IsDevelopment())
             {
@@ -54,10 +58,13 @@ namespace NetCoreEmpty
             {
                 endpoints.MapGet("/", async context =>
                 {
-                    var mensagem = _config["Mensagem"];
-                    var conexao = _config["ConnectionStrings:DefaultConnection"];
-                    await context.Response.WriteAsync(mensagem);
-                    await context.Response.WriteAsync(conexao);
+                    //var mensagem = _config["Mensagem"];
+                    //var conexao = _config["ConnectionStrings:DefaultConnection"];
+                    //await context.Response.WriteAsync(mensagem);
+                    //await context.Response.WriteAsync(conexao);
+
+                    await context.Response.WriteAsync(msg.GetMensagem());
+
                 });
             });
         }
